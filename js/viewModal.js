@@ -2042,10 +2042,6 @@ async function loadViewNumistaData(item, container, apiResult) {
 
   // Removed: Rarity index rendering for Vault fork
 
-    rarityRow.appendChild(bar);
-    section.appendChild(rarityRow);
-  }
-
   // Mintage: prefer item-level flat value, then cache/API per-year data.
   if (
     cfg.mintage !== false &&
