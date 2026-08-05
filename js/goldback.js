@@ -1,88 +1,15 @@
-// GOLDBACK DENOMINATION PRICING (STACK-45)
-// =============================================================================
-// Manual-entry pricing for Goldback denominations.
-// Follows priceHistory.js patterns: save/load/record with saveDataSync/loadDataSync.
-// Data structures:
-//   goldbackPrices:       { "1": { price: 5.12, updatedAt: 1707500000000 }, ... }
-//   goldbackPriceHistory: { "1": [{ ts: 1707500000000, price: 5.12 }, ...], ... }
-// =============================================================================
+// Removed: Goldback pricing features disabled for Vault fork.
+// The original goldback.js implementation was intentionally comprehensive
+// (pricing sources, history, exchange estimates). For the Vault fork these
+// features are out of scope and must be removed from the UI and storage.
+// Keeping this file as a deliberate no-op stub to avoid missing-module errors.
 
-let goldbackPricingSource = "api";
-
-const GOLD_BACK_PRICING_SOURCES = new Set(["off", "api", "spot", "manual"]);
-
-const syncLegacyGoldbackFlags = () => {
-  goldbackEnabled = goldbackPricingSource !== "off";
-  goldbackEstimateEnabled = goldbackPricingSource === "spot";
-  if (typeof window !== "undefined") {
-    window.goldbackPricingSource = goldbackPricingSource;
-  }
-};
-
-const normalizeGoldbackPricingSource = (value) => {
-  const source = typeof value === "string" ? value.toLowerCase() : "";
-  return GOLD_BACK_PRICING_SOURCES.has(source) ? source : null;
-};
-
-/**
- * Loads the active Goldback pricing source from localStorage, migrating from
- * legacy boolean keys if needed.
- * @returns {"off"|"api"|"spot"|"manual"}
- */
-const loadGoldbackPricingSource = () => {
-  try {
-    const storedValue = loadDataSync(GOLDBACK_PRICING_SOURCE_KEY, null);
-    const normalizedValue = normalizeGoldbackPricingSource(storedValue);
-
-    if (normalizedValue) {
-      goldbackPricingSource = normalizedValue;
-      syncLegacyGoldbackFlags();
-      return goldbackPricingSource;
-    }
-
-    const legacyEnabled = loadDataSync(GOLDBACK_ENABLED_KEY, true) === true;
-    const legacyEstimateEnabled = loadDataSync(GOLDBACK_ESTIMATE_ENABLED_KEY, false) === true;
-
-    goldbackPricingSource = !legacyEnabled ? "off" : legacyEstimateEnabled ? "spot" : "api";
-    saveDataSync(GOLDBACK_PRICING_SOURCE_KEY, goldbackPricingSource);
-  } catch (error) {
-    console.error("Error loading Goldback pricing source:", error);
-    goldbackPricingSource = "api";
-  }
-
-  syncLegacyGoldbackFlags();
-  return goldbackPricingSource;
-};
-
-/**
- * Saves the active Goldback pricing source to localStorage.
- * @param {"off"|"api"|"spot"|"manual"} value - Selected source identifier
- * @returns {"off"|"api"|"spot"|"manual"}
- */
-const saveGoldbackPricingSource = (value) => {
-  const normalizedValue = normalizeGoldbackPricingSource(value) || "api";
-  goldbackPricingSource = normalizedValue;
-  syncLegacyGoldbackFlags();
-
-  try {
-    saveDataSync(GOLDBACK_PRICING_SOURCE_KEY, goldbackPricingSource);
-  } catch (error) {
-    console.error("Error saving Goldback pricing source:", error);
-  }
-
-  return goldbackPricingSource;
-};
-
-/**
- * Saves current Goldback denomination prices to localStorage.
- */
-const saveGoldbackPrices = () => {
-  try {
-    saveDataSync(GOLDBACK_PRICES_KEY, goldbackPrices);
-  } catch (error) {
-    console.error("Error saving Goldback prices:", error);
-  }
-};
+/* eslint-disable no-unused-vars */
+const goldbackPricingSource = "off";
+const GOLD_BACK_PRICING_SOURCES = new Set(["off"]);
+const loadGoldbackPricingSource = () => "off";
+const saveGoldbackPricingSource = () => "off";
+const saveGoldbackPrices = () => {};
 
 /**
  * Loads Goldback denomination prices from localStorage into global state.

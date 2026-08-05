@@ -243,6 +243,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     elements.newTagInput = safeGetElement("newTagInput");
     elements.addTagBtn = safeGetElement("addTagBtn");
 
+    // Removed Numista/PCGS UI (Vault-fork) — disable DOM refs so later wiring is skipped
+    // Setting these to null prevents event wiring that assumes the UI exists.
+    elements.numistaDataSection = null;
+    elements.searchNumistaBtn = null;
+    elements.lookupPcgsBtn = null;
+    elements.searchNumistaNameBtn = null;
+    elements.itemPcgsNumber = null;
+    elements.itemCatalog = null;
+    // tagsSection/newTagInput/addTagBtn remain in use — keep them as-is
+    // If any module expects numista DOM, it should guard; null prevents accidental listeners.
+
+
     const numistaDiameterEl = safeGetElement("numistaDiameter");
     if (numistaDiameterEl && typeof safeAttachListener === "function") {
       safeAttachListener(
@@ -289,17 +301,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     elements.numistaImportOptions = safeGetElement("numistaImportOptions");
     elements.exportCsvBtn = safeGetElement("exportCsvBtn");
     elements.exportJsonBtn = safeGetElement("exportJsonBtn");
-    elements.exportPdfBtn = safeGetElement("exportPdfBtn");
+    // Export to PDF removed — disable element ref so no listeners are attached
+    elements.exportPdfBtn = null;
     elements.printBtn = safeGetElement("printBtn");
     elements.cloudSyncBtn = safeGetElement("cloudSyncBtn");
     elements.syncAllBtn = safeGetElement("syncAllBtn");
-    elements.numistaApiKey = safeGetElement("numistaApiKey");
+    // Numista import and API key removed — null refs
+    elements.numistaImportBtn = null;
+    elements.numistaImportFile = null;
+    elements.numistaImportOptions = null;
+    elements.numistaApiKey = null;
     elements.removeInventoryDataBtn = safeGetElement("removeInventoryDataBtn");
     elements.boatingAccidentBtn = safeGetElement("boatingAccidentBtn");
     elements.forceRefreshBtn = safeGetElement("forceRefreshBtn");
-    elements.vaultExportBtn = safeGetElement("vaultExportBtn");
-    elements.vaultImportBtn = safeGetElement("vaultImportBtn");
-    elements.vaultImportFile = safeGetElement("vaultImportFile");
+    // Vault import/export UI removed — null refs to prevent wiring
+    elements.vaultExportBtn = null;
+    elements.vaultImportBtn = null;
+    elements.vaultImportFile = null;
 
     // Modal elements
     debugLog("Phase 4: Initializing modal elements...");

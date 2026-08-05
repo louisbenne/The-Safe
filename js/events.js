@@ -8,6 +8,38 @@
 // EVENT UTILITIES
 // =============================================================================
 
+// Blocklist of DOM IDs removed by the Vault-fork cleanup.
+// Overriding document.getElementById here (narrowly) prevents accidental
+// listener wiring to elements that intentionally no longer exist.
+(function () {
+  try {
+    const REMOVED_DOM_IDS = new Set([
+      "exportPdfBtn",
+      "numistaImportBtn",
+      "numistaImportFile",
+      "numistaImportOptions",
+      "numistaApiKey",
+      "searchNumistaBtn",
+      "lookupPcgsBtn",
+      "searchNumistaNameBtn",
+      "itemPcgsNumber",
+      "itemCatalog",
+      "vaultExportBtn",
+      "vaultImportBtn",
+      "vaultImportFile",
+      "numistaViewFields",
+    ]);
+
+    const _origGetElementById = document.getElementById.bind(document);
+    document.getElementById = function (id) {
+      if (REMOVED_DOM_IDS.has(id)) return null;
+      return _origGetElementById(id);
+    };
+  } catch (e) {
+    // If running in a non-browser environment or before document exists, skip.
+  }
+})();
+
 /**
  * Safely attaches event listener with fallback methods
  * @param {HTMLElement|Window|Document} element - Element to attach listener to

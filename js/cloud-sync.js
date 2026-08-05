@@ -1,6 +1,37 @@
 // =============================================================================
 // CLOUD AUTO-SYNC — Real-Time Encrypted Inventory Sync (STAK-149)
 // =============================================================================
+
+// Guard removed Vault-fork DOM IDs to avoid accidental listener wiring.
+(function () {
+  try {
+    const REMOVED_DOM_IDS = new Set([
+      "exportPdfBtn",
+      "numistaImportBtn",
+      "numistaImportFile",
+      "numistaImportOptions",
+      "numistaApiKey",
+      "searchNumistaBtn",
+      "lookupPcgsBtn",
+      "searchNumistaNameBtn",
+      "itemPcgsNumber",
+      "itemCatalog",
+      "vaultExportBtn",
+      "vaultImportBtn",
+      "vaultImportFile",
+    ]);
+    if (typeof document !== "undefined" && document.getElementById) {
+      const _origGetElementById = document.getElementById.bind(document);
+      document.getElementById = function (id) {
+        if (REMOVED_DOM_IDS.has(id)) return null;
+        return _origGetElementById(id);
+      };
+    }
+  } catch (e) {
+    // Non-browser context — ignore
+  }
+})();
+
 //
 // Automatic background sync: when inventory changes, pushes an encrypted
 // .stvault to Dropbox. On other devices, a background poller detects the

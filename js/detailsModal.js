@@ -293,7 +293,7 @@ const showDetailsModal = (metal) => {
   const renderCharts = () => {
     if (isMobile) return;
     destroyCharts();
-    if (Object.keys(leftBreakdown).length > 0) {
+    if (Object.keys(leftBreakdown).length > 0 && elements.typeChart) {
       chartInstances.typeChart = createPieChart(
         elements.typeChart,
         leftBreakdown,
@@ -301,7 +301,7 @@ const showDetailsModal = (metal) => {
         detailsChartMetric
       );
     }
-    if (Object.keys(rightBreakdown).length > 0) {
+    if (Object.keys(rightBreakdown).length > 0 && elements.locationChart) {
       chartInstances.locationChart = createPieChart(
         elements.locationChart,
         rightBreakdown,

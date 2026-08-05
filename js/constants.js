@@ -963,14 +963,7 @@ const SYNC_SCOPE_KEYS = [
   "headerBtnOrder", // button ordering
 
   // ── Feature toggles ──
-  "goldback-pricing-source", // GOLDBACK_PRICING_SOURCE_KEY
-  "goldback-estimate-modifier", // GB_ESTIMATE_MODIFIER_KEY
-  "show-spot-ratios", // SPOT_RATIOS_KEY
-
-  // ── Numista config ──
-  "numista_tags_auto", // auto-tag on Numista lookup
-  "numistaLookupRules", // lookup rule config
-  "numistaViewFields", // view modal field config
+  // (Vault fork) goldback and Numista catalog-related feature toggles removed
 
   // ── Seed & provider config ──
   "apiProviderOrder", // spot provider order
@@ -979,11 +972,10 @@ const SYNC_SCOPE_KEYS = [
   "metalSpotPrices", // STAK-443: manual-mode spot prices {gold, silver, platinum, palladium}
 
   // ── API credentials ──
-  "metalApiConfig", // API_KEY_STORAGE_KEY — spot provider keys (MetalPriceAPI, Metals-API, Custom)
-  "catalog_api_config", // Numista API key, PCGS bearer token (CatalogConfig)
+  // (Vault fork) external catalog and provider credential keys removed
 
   // ── Attachment sync ──
-  "syncAttachments", // boolean: include attachment binaries in cloud sync (default true when missing)
+  // (Vault fork) attachment cloud sync removed; related keys removed
 ];
 
 const SPOT_HISTORY_RUNTIME_WINDOW_DAYS = 180;
@@ -1015,10 +1007,7 @@ const ALLOWED_STORAGE_KEYS = [
   "autocomplete_cache_timestamp",
   "staktrakr.debug",
   "stackrtrackr.debug",
-  "catalog_api_config",
-  "staktrakr.catalog.cache",
-  "staktrakr.catalog.settings",
-  CATALOG_HISTORY_KEY,
+  // Catalog/Numista/PCGS keys removed per Vault-fork cleanup
   SPOT_TREND_RANGE_KEY,
   SPOT_COMPARE_MODE_KEY,
   ITEMS_PER_PAGE_KEY,
@@ -1032,20 +1021,14 @@ const ALLOWED_STORAGE_KEYS = [
   "filterChipCategoryConfig",
   "chipSortOrder",
   "disposedFilterMode", // string: "hide"|"show"|"only" — disposed items filter preference (STAK-388)
-  GOLDBACK_PRICES_KEY,
-  GOLDBACK_PRICE_HISTORY_KEY,
+  // Goldback pricing keys removed
   RETAIL_PRICES_KEY,
   RETAIL_PRICE_HISTORY_KEY,
   RETAIL_PROVIDERS_KEY,
   RETAIL_INTRADAY_KEY,
   RETAIL_SYNC_LOG_KEY,
   RETAIL_AVAILABILITY_KEY,
-  NUMISTA_RESPONSE_CACHE_KEY,
-  PCGS_RESPONSE_CACHE_KEY,
-  GOLDBACK_ENABLED_KEY,
-  GOLDBACK_ESTIMATE_ENABLED_KEY,
-  GB_ESTIMATE_MODIFIER_KEY,
-  GOLDBACK_PRICING_SOURCE_KEY,
+  // Numista/PCGS caches removed
   SPOT_RATIOS_KEY, // STRK-161: persist "Show spot ratios" toggle past cleanupStorage
   DISPLAY_CURRENCY_KEY,
   EXCHANGE_RATES_KEY,
@@ -1068,8 +1051,6 @@ const ALLOWED_STORAGE_KEYS = [
   "migration_seedHistoryMerge", // one-time migration flag: skip redundant seed-history merge writes
   "migration_cmp2_compression", // one-time migration flag: re-encode CMP1/large keys to CMP2 (STRK-140)
   "migration_idb_history_v1", // one-time migration flag: market histories moved to IndexedDB (STRK-141)
-  "numistaLookupRules", // custom Numista search lookup rules (JSON array)
-  "numistaViewFields", // view modal Numista field visibility config (JSON object)
   TIMEZONE_KEY, // string: "auto" | "UTC" | IANA zone (STACK-63)
   "viewModalSectionConfig", // JSON array: ordered view modal section config [{ id, label, enabled }]
   "tableImagesEnabled", // boolean string: "true"/"false" — show thumbnail images in table rows
@@ -1084,33 +1065,11 @@ const ALLOWED_STORAGE_KEYS = [
   ITEM_REMOVED_TAGS_KEY, // JSON object: per-item removed Numista tags keyed by UUID (STAK-556)
   ITEM_TAGS_LAST_MODIFIED_KEY, // JSON object: per-item tag timestamps keyed by UUID (STRK-108)
   "seedImagesVer", // string: current seed images version for cache invalidation
-  "cloud_token_dropbox", // JSON: Dropbox OAuth token data
-  "cloud_token_pcloud", // JSON: pCloud OAuth token data
-  "cloud_token_box", // JSON: Box OAuth token data
-  "cloud_last_backup", // JSON: { provider, timestamp } last cloud backup info
-  "cloud_kraken_seen", // boolean string: easter egg flag
-  "staktrakr_oauth_result", // JSON: transient OAuth callback relay (cleared after read)
-  "cloud_activity_log", // JSON: cloud sync activity log entries
-  // STAK-149: Auto-sync keys
-  "cloud_sync_enabled", // boolean string: "true"/"false" — master auto-sync toggle
-  "cloud_sync_last_push", // JSON: { syncId, timestamp, rev, itemCount } — last push from this device
-  "cloud_sync_last_pull", // JSON: { syncId, timestamp, rev } — last pull on this device
-  "cloud_sync_device_id", // UUID string: stable per-device identifier
-  "cloud_sync_cursor", // Dropbox rev string: for efficient change detection
-  "cloud_sync_override_backup", // JSON: { timestamp, itemCount, appVersion, data: {...} } — pre-pull local snapshot
-  CLOUD_VAULT_IDLE_TIMEOUT_KEY, // number string: vault password idle lock timeout in minutes (15|30|60|120|0=never)
-  "cloud_sync_mode", // DEPRECATED: kept for migration only — will be removed after v3.33
-  "cloud_dropbox_account_id", // string: Dropbox account_id for Simple mode key derivation
-  "cloud_dropbox_email", // string: Dropbox account email for multi-account UX (STAK-449)
-  "cloud_dropbox_display_name", // string: Dropbox display name for multi-account UX (STAK-449)
-  "cloud_vault_password", // string: user vault password stored for persistent unlock
+  // Cloud/vault tokens and vault-related keys removed
   STORAGE_PERSIST_GRANTED_KEY, // boolean string: "true"/"false" — storage persistence grant flag
   "headerBtnOrder", // JSON array: header button card order (STAK-320)
   "tagBlacklist", // JSON array: tags excluded from auto-tagging
-  "numista_tags_auto", // boolean string: "true"/"false" — auto-tag from Numista data
-  "cloud_sync_local_modified", // ISO string: timestamp of last local metalInventory save (STAK-414)
-  "cloud_sync_migrated", // string: "v2" — cloud folder migration flag (flat → /sync/ + /backups/)
-  "cloud_backup_history_depth", // string: "3"|"5"|"10"|"20" — max cloud backups to retain
+  "numista_tags_auto", // auto-tagging preference removed (legacy)
   "manifestPruningThreshold", // number string: max sync cycles to retain in manifest before pruning older entries (STAK-184)
   // STAK-503: v2 API cache keys
   "v2RetailPrices", // JSON: v2 cached retail prices
@@ -1123,9 +1082,6 @@ const ALLOWED_STORAGE_KEYS = [
   "v2SpotHistoryTs", // string: ISO timestamp of cached v2 spot history
   "inventorySeedApplied", // STRK-13: ISO timestamp string, sentinel proving seed has been applied (or migration ran)
   "staktrakr.bootDiagnostics", // STRK-13: JSON array, 10-entry ring buffer of boot classifications
-  // STRK-45: per-item attachments
-  "syncAttachments", // boolean string: "true"/"false" — include attachment binaries in cloud sync (default true when missing)
-  "syncAttachmentsWarnSeen", // boolean string: "true"/"false" — one-time 100 MB warning has been shown
   "__sync_recovery_snapshot", // STRK-135: pre-merge tag snapshot for manual recovery after one-sided merge
 ];
 

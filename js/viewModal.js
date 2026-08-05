@@ -2038,34 +2038,9 @@ async function loadViewNumistaData(item, container, apiResult) {
     }
   }
 
-  // Commemorative
-  if (cfg.commemorative !== false && merged.commemorative && merged.commemorativeDesc) {
-    const commGrid = _el("div", "view-detail-grid");
-    const commItem = _detailItem("Commemorative", merged.commemorativeDesc);
-    commItem.classList.add("full-width");
-    commGrid.appendChild(commItem);
-    section.appendChild(commGrid);
-  }
+  // Removed: Commemorative field rendering for Vault fork
 
-  // Rarity index
-  if (cfg.rarity !== false && merged.rarityIndex > 0) {
-    const rarityRow = _el("div", "view-detail-item");
-
-    const lbl = _el("span", "view-detail-label");
-    lbl.textContent = "Rarity";
-    rarityRow.appendChild(lbl);
-
-    const bar = _el("div", "view-rarity-bar");
-
-    const track = _el("div", "view-rarity-track");
-    const fill = _el("div", "view-rarity-fill");
-    fill.style.width = `${Math.min(merged.rarityIndex, 100)}%`;
-    track.appendChild(fill);
-    bar.appendChild(track);
-
-    const score = _el("span", "view-rarity-score");
-    score.textContent = String(merged.rarityIndex);
-    bar.appendChild(score);
+  // Removed: Rarity index rendering for Vault fork
 
     rarityRow.appendChild(bar);
     section.appendChild(rarityRow);

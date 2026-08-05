@@ -1680,26 +1680,19 @@ const populateNumistaDataFields = (catalogId, itemData, { skipFields = new Set()
     { id: "numistaWidth", itemKey: "width", cacheKey: "width" },
     { id: "numistaOrientation", itemKey: "orientation", cacheKey: "orientation" },
     { id: "numistaTechnique", itemKey: "technique", cacheKey: "technique" },
-    { id: "numistaMintage", itemKey: "mintage", cacheKey: null },
-    { id: "numistaRarity", itemKey: "rarityIndex", cacheKey: "rarityIndex" },
-    { id: "numistaKmRef", itemKey: "kmRef", cacheKey: null },
-    { id: "numistaObverseDesc", itemKey: "obverseDesc", cacheKey: "obverseDesc" },
-    { id: "numistaReverseDesc", itemKey: "reverseDesc", cacheKey: "reverseDesc" },
-    { id: "numistaEdgeDesc", itemKey: "edgeDesc", cacheKey: "edgeDesc" },
   ];
 
   // Clear all fields (skip preserved fields from picker)
   fieldMap.forEach((f) => {
     if (!skipFields.has(f.itemKey)) set(f.id, "");
   });
+  // Commemorative and extended Numista metadata removed in Vault fork; keep no-op guards
   const commCb = safeGetElement("numistaCommemorative");
   const commDescWrap = safeGetElement("numistaCommemorativeDescWrap");
   const commDesc = safeGetElement("numistaCommemorativeDesc");
-  if (!skipFields.has("commemorative")) {
-    if (commCb) commCb.checked = false;
-    if (commDescWrap) commDescWrap.style.display = "none";
-    if (commDesc) commDesc.value = "";
-  }
+  if (commCb) commCb.checked = false;
+  if (commDescWrap) commDescWrap.style.display = "none";
+  if (commDesc) commDesc.value = "";
 
   // Apply a data source to the form fields.
   // Only fills fields that are still empty (preserves higher-rank data).

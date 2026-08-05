@@ -2538,47 +2538,7 @@
                     />
                   </div>
                 </div>
-                <div class="grid grid-2">
-                  <div>
-                    <label for="numistaTechnique">Technique</label>
-                    <input id="numistaTechnique" type="text" placeholder="e.g. Milled" />
-                  </div>
-                  <div>
-                    <label for="numistaMintage">Mintage</label>
-                    <input id="numistaMintage" type="text" placeholder="e.g. 500,000" />
-                  </div>
-                </div>
-                <div class="grid grid-2">
-                  <div>
-                    <label for="numistaRarity">Rarity Index</label>
-                    <input id="numistaRarity" type="text" placeholder="e.g. 85" />
-                  </div>
-                  <div>
-                    <label for="numistaKmRef">KM Reference</label>
-                    <input id="numistaKmRef" type="text" placeholder="e.g. KM#273" />
-                  </div>
-                </div>
-                <div>
-                  <label class="settings-checkbox-label">
-                    <input type="checkbox" id="numistaCommemorative" />
-                    Commemorative
-                  </label>
-                </div>
-                <div id="numistaCommemorativeDescWrap" style="display: none">
-                  <label for="numistaCommemorativeDesc">Commemorative Description</label>
-                  <input
-                    id="numistaCommemorativeDesc"
-                    type="text"
-                    placeholder="What this coin commemorates..."
-                  />
-                </div>
-                <div>
-                  <label for="numistaObverseDesc">Obverse Description</label>
-                  <input
-                    id="numistaObverseDesc"
-                    type="text"
-                    placeholder="Obverse design description..."
-                  />
+                <!-- Removed: Numista/PCGS catalog fields (Vault fork) -->
                 </div>
                 <div>
                   <label for="numistaReverseDesc">Reverse Description</label>
@@ -4530,65 +4490,7 @@
 
               <!-- ── Bulk Editor + Inventory Summary ── -->
               <div class="settings-card-grid" style="margin-bottom: 1rem">
-                <div class="cloud-provider-card">
-                  <div class="cloud-provider-card-header">
-                    <span class="cloud-provider-card-title">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        style="vertical-align: -2px"
-                      >
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                      Bulk Editor
-                    </span>
-                    <span class="cloud-provider-card-badges">
-                      <span class="cloud-badge cloud-badge--beta">BETA</span>
-                    </span>
-                  </div>
-                  <p class="settings-subtext">
-                    Select multiple inventory items and apply batch operations — edit shared fields,
-                    duplicate entries, or remove items in bulk. This feature is actively developed;
-                    please report any issues on GitHub.
-                  </p>
-                  <div
-                    style="
-                      border-top: 1px solid var(--border);
-                      padding-top: 0.6rem;
-                      margin-top: 0.5rem;
-                    "
-                  >
-                    <button
-                      class="btn settings-action-btn"
-                      id="bulkEditBtn"
-                      type="button"
-                      style="font-size: 0.82rem; padding: 0.4rem 0.9rem; min-height: 0"
-                    >
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        style="vertical-align: -2px; margin-right: 0.35rem"
-                      >
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                      Open Bulk Editor
-                    </button>
-                  </div>
-                </div>
+                <!-- Removed: Bulk Editor card and button (Vault fork) -->
                 <div class="cloud-provider-card" id="inventorySummaryCard">
                   <div class="cloud-provider-card-header">
                     <span class="cloud-provider-card-title">
@@ -4783,18 +4685,7 @@
                           id="exportPdfBtn"
                           aria-describedby="exportPdfDesc"
                           title="Inventory items only — printable report"
-                          style="
-                            font-size: 0.82rem;
-                            padding: 0.4rem 0.6rem;
-                            min-height: 0;
-                            width: 100%;
-                          "
-                        >
-                          Export PDF
-                        </button>
-                        <span id="exportPdfDesc" class="sr-only"
-                          >Inventory items only — printable report</span
-                        >
+                          <!-- Removed: Export PDF option (Vault fork) -->
                         <button
                           class="btn info"
                           id="exportZipBtn"
@@ -4932,15 +4823,7 @@
                         >Encrypted full backup — inventory, settings, price history, and
                         images</span
                       >
-                      <button
-                        class="btn info"
-                        id="vaultImportBtn"
-                        style="font-size: 0.82rem; padding: 0.4rem 0.6rem; min-height: 0"
-                      >
-                        Restore Backup
-                      </button>
-                    </div>
-                    <input type="file" id="vaultImportFile" accept=".stvault" hidden />
+                      <!-- Removed: Encrypted vault (.stvault) import UI (Vault fork) -->
                   </div>
                 </div>
               </div>
@@ -6660,63 +6543,7 @@
             Your photos will be saved as a separate companion file.
           </div>
 
-          <div id="vaultDescImport" class="encryption-info" style="display: none">
-            <strong>Included:</strong> All inventory data, settings, API keys, and price history. To
-            also restore photos, add the companion <em>-images.stvault</em> file below.
-          </div>
-
-          <div id="vaultFileInfo" class="encryption-info" style="display: none">
-            <strong>File:</strong> <span id="vaultFileName"></span> (<span id="vaultFileSize"></span
-            >)
-          </div>
-
-          <!-- Image vault companion file (import mode only) -->
-          <div id="vaultImageFileRow" style="display: none">
-            <div class="encryption-info" id="vaultImageFileInfo" style="display: none">
-              <strong>Photos:</strong> <span id="vaultImageFileName"></span> (<span
-                id="vaultImageFileSize"
-              ></span
-              >)
-            </div>
-            <div class="settings-btn-row" id="vaultImagePickerRow">
-              <label class="btn" style="cursor: pointer" for="vaultImageImportFile"
-                >+ Add Photos File</label
-              >
-              <small style="opacity: 0.65"
-                >Optional: <em>-images.stvault</em> from the same export</small
-              >
-            </div>
-            <input type="file" id="vaultImageImportFile" accept=".stvault" hidden />
-          </div>
-
-          <!-- Attachment vault companion file (import mode only — STRK-45) -->
-          <div id="vaultAttachmentFileRow" style="display: none">
-            <div class="encryption-info" id="vaultAttachmentFileInfo" style="display: none">
-              <strong>Attachments:</strong> <span id="vaultAttachmentFileName"></span> (<span
-                id="vaultAttachmentFileSize"
-              ></span
-              >)
-            </div>
-            <div class="settings-btn-row" id="vaultAttachmentPickerRow">
-              <label class="btn" style="cursor: pointer" for="vaultAttachmentImportFile"
-                >+ Add Attachments File</label
-              >
-              <small style="opacity: 0.65"
-                >Optional: <em>-attachments.stvault</em> from the same export</small
-              >
-            </div>
-            <input type="file" id="vaultAttachmentImportFile" accept=".stvault" hidden />
-          </div>
-
-          <div class="form-row">
-            <label for="vaultPassword">Password</label>
-            <div class="password-input-group">
-              <input
-                type="password"
-                id="vaultPassword"
-                placeholder="Minimum 8 characters"
-                autocomplete="off"
-              />
+          <!-- Removed: Encrypted vault import/export UI and password prompts (Vault fork) -->
               <button
                 type="button"
                 class="password-toggle"

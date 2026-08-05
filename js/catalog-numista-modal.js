@@ -314,7 +314,7 @@ const renderNumistaFieldCheckboxes = (result) => {
     reverseImage:
       (elements.itemReverseImageUrl || safeGetElement("itemReverseImageUrl"))?.value?.trim() || "",
     metal: (elements.itemMetal || safeGetElement("itemMetal"))?.value || "",
-    // Numista Data tab fields (STRK-51)
+    // Numista Data tab fields (Vault fork: only core catalog fields retained)
     country: safeGetElement("numistaCountry")?.value?.trim() || "",
     denomination: safeGetElement("numistaDenomination")?.value?.trim() || "",
     composition: safeGetElement("numistaComposition")?.value?.trim() || "",
@@ -325,14 +325,6 @@ const renderNumistaFieldCheckboxes = (result) => {
     width: safeGetElement("numistaWidth")?.value?.trim() || "",
     orientation: safeGetElement("numistaOrientation")?.value?.trim() || "",
     technique: safeGetElement("numistaTechnique")?.value?.trim() || "",
-    mintage: safeGetElement("numistaMintage")?.value?.trim() || "",
-    rarityIndex: safeGetElement("numistaRarity")?.value?.trim() || "",
-    kmRef: safeGetElement("numistaKmRef")?.value?.trim() || "",
-    commemorative: safeGetElement("numistaCommemorative")?.checked ? "Yes" : "",
-    commemorativeDesc: safeGetElement("numistaCommemorativeDesc")?.value?.trim() || "",
-    obverseDesc: safeGetElement("numistaObverseDesc")?.value?.trim() || "",
-    reverseDesc: safeGetElement("numistaReverseDesc")?.value?.trim() || "",
-    edgeDesc: safeGetElement("numistaEdgeDesc")?.value?.trim() || "",
   };
 
   fields.forEach((f) => {
@@ -1128,21 +1120,7 @@ const fillFormFromNumistaResult = () => {
         if (el) el.value = val;
         break;
       }
-      case "mintage": {
-        const el = safeGetElement("numistaMintage");
-        if (el) el.value = val;
-        break;
-      }
-      case "rarityIndex": {
-        const el = safeGetElement("numistaRarity");
-        if (el) el.value = val;
-        break;
-      }
-      case "kmRef": {
-        const el = safeGetElement("numistaKmRef");
-        if (el) el.value = val;
-        break;
-      }
+      // Removed: mintage / rarity / KM reference fields (Vault fork)
       case "commemorative": {
         const cb = safeGetElement("numistaCommemorative");
         if (cb) {

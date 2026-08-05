@@ -1,123 +1,21 @@
-/**
- * Encrypted Vault Backup Module (.stvault)
- *
- * Provides AES-256-GCM encrypted export/import of all localStorage data.
- * Uses Web Crypto API (primary) with forge.js fallback for file:// protocol.
- *
- * Binary format (56-byte header + ciphertext):
- *   0-6   : "STVAULT" magic bytes
- *   7     : format version (0x01)
- *   8-11  : PBKDF2 iterations (uint32 big-endian)
- *   12-43 : 32-byte random salt
- *   44-55 : 12-byte random IV/nonce
- *   56+   : AES-256-GCM ciphertext (includes 16-byte auth tag)
- */
+// Removed: Encrypted vault (.stvault) export/import disabled for Vault fork.
+// The original vault.js implemented AES-256-GCM backup/restore flows and
+// Diff/restore UI. For the Vault fork these flows are removed from the
+// application's surface and storage model. Keep a minimal stub to avoid
+// runtime ReferenceErrors from callers that haven't yet been fully removed.
 
-// =============================================================================
-// CONSTANTS
-// =============================================================================
-
-const VAULT_MAGIC = new Uint8Array([0x53, 0x54, 0x56, 0x41, 0x55, 0x4c, 0x54]); // "STVAULT"
-const VAULT_VERSION = 0x01;
-const VAULT_HEADER_SIZE = 56;
-const VAULT_PBKDF2_ITERATIONS = 600000;
-const VAULT_MIN_PASSWORD_LENGTH = 8;
-const VAULT_MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
-
-// =============================================================================
-// CRYPTO ABSTRACTION LAYER → js/vault-crypto.js (STRK-176)
-// =============================================================================
-// getCryptoBackend, vaultRandomBytes, vaultDeriveKey, vaultEncrypt, vaultDecrypt
-// were extracted verbatim to the sibling js/vault-crypto.js (loaded before this
-// file). They remain bare globals, so the call sites below are unchanged.
-// =============================================================================
-
-// =============================================================================
-// BINARY FORMAT
-// =============================================================================
-
-/**
- * Serialize vault header + ciphertext into a single binary blob.
- * @param {Uint8Array} salt - 32 bytes
- * @param {Uint8Array} iv - 12 bytes
- * @param {number} iterations
- * @param {Uint8Array} ciphertext
- * @returns {Uint8Array}
- */
-function serializeVaultFile(salt, iv, iterations, ciphertext) {
-  var file = new Uint8Array(VAULT_HEADER_SIZE + ciphertext.length);
-  // Magic bytes
-  file.set(VAULT_MAGIC, 0);
-  // Version
-  file[7] = VAULT_VERSION;
-  // Iterations (uint32 big-endian)
-  file[8] = (iterations >>> 24) & 0xff;
-  file[9] = (iterations >>> 16) & 0xff;
-  file[10] = (iterations >>> 8) & 0xff;
-  file[11] = iterations & 0xff;
-  // Salt
-  file.set(salt, 12);
-  // IV
-  file.set(iv, 44);
-  // Ciphertext
-  file.set(ciphertext, VAULT_HEADER_SIZE);
-  return file;
+function collectVaultData() {
+  // Vault export removed in Vault fork — return null to indicate no data.
+  return null;
 }
 
-/**
- * Parse a .stvault binary file into its components.
- * @param {Uint8Array} fileBytes
- * @returns {{salt: Uint8Array, iv: Uint8Array, iterations: number, ciphertext: Uint8Array}}
- * @throws {Error} On invalid format
- */
-function parseVaultFile(fileBytes) {
-  if (fileBytes.length < VAULT_HEADER_SIZE + 16) {
-    throw new Error("Not a valid .stvault file.");
-  }
-  // Check magic bytes
-  for (var i = 0; i < VAULT_MAGIC.length; i++) {
-    if (fileBytes[i] !== VAULT_MAGIC[i]) {
-      throw new Error("Not a valid .stvault file.");
-    }
-  }
-  // Check version
-  var version = fileBytes[7];
-  if (version > VAULT_VERSION) {
-    throw new Error("Created by a newer StakTrakr version. Please update.");
-  }
-  // Parse iterations
-  var iterations =
-    (fileBytes[8] << 24) | (fileBytes[9] << 16) | (fileBytes[10] << 8) | fileBytes[11];
-  iterations = iterations >>> 0; // ensure unsigned
-
-  var salt = fileBytes.slice(12, 44);
-  var iv = fileBytes.slice(44, 56);
-  var ciphertext = fileBytes.slice(VAULT_HEADER_SIZE);
-
-  return {
-    salt: salt,
-    iv: iv,
-    iterations: iterations,
-    ciphertext: ciphertext,
-  };
+async function vaultDecryptToData() {
+  throw new Error("Encrypted vault import is disabled in this fork.");
 }
 
-/**
- * Parse a raw vault/localStorage setting value.
- * Settings may be stored as raw strings, JSON strings, or CMP1/CMP2-compressed strings.
- * @param {*} rawValue
- * @returns {*} Parsed JSON value, or the raw/decompressed value when parsing fails
- */
-function parseVaultSettingValue(rawValue) {
-  if (typeof rawValue !== "string") return rawValue;
-  var value =
-    typeof __decompressIfNeeded === "function" ? __decompressIfNeeded(rawValue) : rawValue;
-  try {
-    return JSON.parse(value);
-  } catch (_e) {
-    return value;
-  }
-}
+// Export minimal API to preserve imports
+window.collectVaultData = collectVaultData;
+window.vaultDecryptToData = vaultDecryptToData;
 
 // =============================================================================
 // DATA COLLECTION / RESTORATION
