@@ -18,9 +18,39 @@ app.use(express.json());
 const TMP_DIR = path.join(__dirname, 'tmp');
 try { fs.mkdirSync(TMP_DIR, { recursive: true }); } catch (e) { /* ignore */ }
 
+// JWT secret — fail fast in production if not set
 const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-prod';
+if (process.env.NODE_ENV === 'production' && JWT_SECRET === 'change-me-in-prod') {
+  console.error('FATAL: JWT_SECRET is not set in production. Set JWT_SECRET in the environment and restart.');
+  process.exit(1);
+}
 if (JWT_SECRET === 'change-me-in-prod') console.warn('Warning: using default JWT_SECRET. Set JWT_SECRET in .env for production.');
+
 const upload = multer({ dest: TMP_DIR });
+
+// Periodic tmp prune: remove files older than TMP_PRUNE_MINUTES (default 60)
+const TMP_PRUNE_MINUTES = parseInt(process.env.TMP_PRUNE_MINUTES || '60', 10);
+function pruneTmpFiles() {
+  const cutoff = Date.now() - TMP_PRUNE_MINUTES * 60 * 1000;
+  fs.readdir(TMP_DIR, (err, files) => {
+    if (err) return;
+    files.forEach((f) => {
+      const p = path.join(TMP_DIR, f);
+      fs.stat(p, (e, st) => {
+        if (e) return;
+        if (st.isFile() && st.mtimeMs < cutoff) {
+          fs.unlink(p, (er) => {
+            if (er) console.warn('Failed pruning tmp file', p, er.message || er);
+            else console.log('Pruned tmp file', p);
+          });
+        }
+      });
+    });
+  });
+}
+// Run immediate prune and schedule periodic pruning
+try { pruneTmpFiles(); } catch (e) {}
+setInterval(pruneTmpFiles, (parseInt(process.env.TMP_PRUNE_INTERVAL_MINUTES || '60', 10) * 60 * 1000));
 
 // Helper: run SQL with Promise
 function runAsync(sql, params=[]) {
