@@ -549,6 +549,20 @@
         </h1>
         <span class="env-badge" id="envBadge" style="display: none"></span>
       </div>
+      <div class="app-actions" style="display:flex;gap:0.5rem;align-items:center;">
+        <span id="currentUserDisplay" style="font-size:0.9rem;color:var(--text-muted);"></span>
+        <button id="loginBtn" class="btn btn-ghost" type="button">Login</button>
+        <button id="registerBtn" class="btn btn-ghost" type="button">Register</button>
+        <button id="logoutBtn" class="btn btn-ghost" type="button" hidden>Logout</button>
+      </div>
+      <div id="serverImportSection" hidden style="margin-left:1rem;">
+        <form id="serverImportForm" enctype="multipart/form-data">
+          <input id="importFileInput" name="file" type="file" accept=",.xlsx,.xls,.csv" />
+          <button id="importSubmitBtn" type="submit" class="btn btn-primary">Import</button>
+          <span id="importStatus" style="margin-left:0.5rem;color:var(--text-muted);"></span>
+        </form>
+      </div>
+
       <div class="app-header-actions" id="headerBtnContainer">
         <!-- Spot sync button retired (STRK-284) — spot prices are refreshed from
              the per-card .spot-sync-icon on each spot card. Every card's icon
