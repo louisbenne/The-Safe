@@ -58,7 +58,15 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      if (!res.ok) throw new Error('login_failed');
+      if (!res.ok) {
+        const txt = await res.text();
+        let msg = res.statusText || 'Login failed';
+        try {
+          const j = JSON.parse(txt);
+          msg = j.error || j.message || msg;
+        } catch (e) {}
+        throw new Error(msg);
+      }
       const data = await res.json();
       setToken(data.token);
       updateUi(data.user || { email });
@@ -77,7 +85,15 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      if (!res.ok) throw new Error('register_failed');
+      if (!res.ok) {
+        const txt = await res.text();
+        let msg = res.statusText || 'Registration failed';
+        try {
+          const j = JSON.parse(txt);
+          msg = j.error || j.message || msg;
+        } catch (e) {}
+        throw new Error(msg);
+      }
       const data = await res.json();
       setToken(data.token);
       updateUi(data.user || { email });
@@ -88,49 +104,89 @@
     }
   }
 
-  // Wire up header buttons (if present)
+  // Wire up header buttons (if present) and the new modal auth form
   document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('loginBtn');
     const registerBtn = document.getElementById('registerBtn');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    if (loginBtn) {
-      loginBtn.addEventListener('click', async () => {
-        const email = prompt('Email for login');
-        const password = prompt('Password');
-        if (!email || !password) return alert('Email and password required');
-        try {
-          await doLogin(email, password);
-          alert('Logged in');
-        } catch (e) {
-          alert('Login failed');
-        }
-      });
+    // Modal elements (added to index.html)
+    const authModal = document.getElementById('authModal');
+    const authModeLabel = document.getElementById('authModeLabel');
+    const authEmail = document.getElementById('authEmail');
+    const authPassword = document.getElementById('authPassword');
+    const authConfirmWrap = document.getElementById('authConfirmWrap');
+    const authConfirmPassword = document.getElementById('authConfirmPassword');
+    const authError = document.getElementById('authError');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const authCloseBtn = document.getElementById('authCloseBtn');
+
+    function openAuthModal(mode) {
+      if (!authModal) return;
+      authModal.dataset.mode = mode || 'login';
+      authModeLabel.textContent = mode === 'register' ? 'Register' : 'Login';
+      if (authConfirmWrap) authConfirmWrap.style.display = mode === 'register' ? '' : 'none';
+      authError.textContent = '';
+      authEmail.value = '';
+      authPassword.value = '';
+      if (authConfirmPassword) authConfirmPassword.value = '';
+      authModal.style.display = 'flex';
+      authEmail.focus();
     }
 
-    if (registerBtn) {
-      registerBtn.addEventListener('click', async () => {
-        const email = prompt('Email for registration');
-        const password = prompt('Password');
-        if (!email || !password) return alert('Email and password required');
-        try {
-          await doRegister(email, password);
-          alert('Registered and logged in');
-        } catch (e) {
-          alert('Registration failed');
-        }
-      });
+    function closeAuthModal() {
+      if (!authModal) return;
+      authModal.style.display = 'none';
     }
 
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        logout();
-        alert('Logged out');
+    // Basic validators
+    function validEmail(em) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em);
+    }
+
+    function showAuthError(msg) {
+      if (authError) authError.textContent = msg || '';
+    }
+
+    if (loginBtn) loginBtn.addEventListener('click', () => openAuthModal('login'));
+    if (registerBtn) registerBtn.addEventListener('click', () => openAuthModal('register'));
+    if (logoutBtn) logoutBtn.addEventListener('click', () => { logout(); updateUi(); });
+
+    if (authCloseBtn) authCloseBtn.addEventListener('click', closeAuthModal);
+
+    if (authSubmitBtn) {
+      authSubmitBtn.addEventListener('click', async (ev) => {
+        ev && ev.preventDefault && ev.preventDefault();
+        const mode = authModal && authModal.dataset.mode ? authModal.dataset.mode : 'login';
+        const email = authEmail && authEmail.value ? authEmail.value.trim() : '';
+        const password = authPassword && authPassword.value ? authPassword.value : '';
+        const confirm = authConfirmPassword && authConfirmPassword.value ? authConfirmPassword.value : '';
+
+        if (!validEmail(email)) return showAuthError('Enter a valid email address');
+        if (!password || password.length < 8) return showAuthError('Password must be at least 8 characters');
+        if (mode === 'register' && password !== confirm) return showAuthError('Passwords do not match');
+
+        showAuthError('');
+        authSubmitBtn.disabled = true;
+        try {
+          if (mode === 'register') {
+            await doRegister(email, password);
+          } else {
+            await doLogin(email, password);
+          }
+          closeAuthModal();
+          updateUi();
+        } catch (err) {
+          var msg = (err && err.message) ? err.message : 'Server error';
+          showAuthError(msg);
+          console.error('auth submit error', err);
+        } finally {
+          authSubmitBtn.disabled = false;
+        }
       });
     }
 
     // Initialise UI state from token
-    // Optionally fetch /api/health or /api/me later to show user info
     updateUi();
   });
 

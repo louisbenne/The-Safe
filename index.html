@@ -605,6 +605,37 @@
         </form>
       </div>
 
+      <!-- Auth modal (login/register) -->
+      <div id="authModal" class="modal" role="dialog" aria-modal="true" style="display:none;align-items:center;justify-content:center;z-index:12000;">
+        <div class="modal-content" style="max-width:360px;">
+          <div class="modal-header">
+            <button aria-label="Close modal" class="modal-close" id="authCloseBtn">×</button>
+            <h3 id="authModeLabel">Login</h3>
+          </div>
+          <div class="modal-body">
+            <form id="authForm" onsubmit="return false;">
+              <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                <label for="authEmail">Email</label>
+                <input id="authEmail" type="email" placeholder="you@example.com" />
+
+                <div id="authConfirmWrap" style="display:none;">
+                  <label for="authConfirmPassword">Confirm password</label>
+                  <input id="authConfirmPassword" type="password" autocomplete="new-password" />
+                </div>
+
+                <label for="authPassword">Password</label>
+                <input id="authPassword" type="password" autocomplete="current-password" />
+
+                <div id="authError" style="color:var(--danger,#ef4444);min-height:1.2rem"></div>
+                <div style="display:flex;justify-content:flex-end;">
+                  <button id="authSubmitBtn" class="btn btn-primary" type="button">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
       <div class="app-header-actions" id="headerBtnContainer">
         <!-- Spot sync button retired (STRK-284) — spot prices are refreshed from
              the per-card .spot-sync-icon on each spot card. Every card's icon
@@ -7825,6 +7856,7 @@
     <script defer src="./js/ratios-panel.js"></script>
 
     <script defer src="./js/auth.js"></script>
+    <script defer src="./js/auth-fix.js"></script>
     <script defer src="./js/sync.js"></script>
     <script defer src="./js/init.js"></script>
 
