@@ -14,10 +14,10 @@
  */
 const API_PROVIDERS = {
   STAKTRAKR: {
-    name: "StakTrakr",
+    name: "THE SAFE",
     baseUrl: "https://api.staktrakr.com/data",
     requiresKey: false,
-    documentation: "https://www.staktrakr.com",
+    documentation: "https://benne.co.uk",
     endpoints: { silver: "", gold: "", platinum: "", palladium: "" },
     getEndpoint: () => "",
     parseResponse: () => null,
