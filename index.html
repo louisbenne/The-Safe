@@ -149,7 +149,19 @@
 
     
     <!-- DEV: set server URL for local testing (override with window.THE_SAFE_SERVER_URL) -->
-    <script>if(!window.THE_SAFE_SERVER_URL)window.THE_SAFE_SERVER_URL='http://localhost:4000';</script>
+    <script>
+      if (!window.THE_SAFE_SERVER_URL) {
+        window.THE_SAFE_SERVER_URL = 'http://localhost:4000';
+      } else {
+        // sanitize markdown-style pastes like "[http://localhost:4000](http://localhost:4000)"
+        try {
+          var m = String(window.THE_SAFE_SERVER_URL).match(/\[?(https?:\/\/[^\]\(\s]+)\]?(?:\([^\)]*\))?/);
+          if (m && m[1]) window.THE_SAFE_SERVER_URL = m[1];
+        } catch (e) {
+          // leave as-is on any regex error
+        }
+      }
+    </script>
 <!-- THEME FLASH PREVENTION: set data-theme before CSS renders so :root light-mode
          vars never paint. Runs synchronously (no defer) after file-protocol-fix.js so
          the localStorage polyfill is already in place. Uses hardcoded key/values to
