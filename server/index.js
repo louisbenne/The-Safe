@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-prod';
+if (JWT_SECRET === 'change-me-in-prod') console.warn('Warning: using default JWT_SECRET. Set JWT_SECRET in .env for production.');
 const upload = multer({ dest: path.join(__dirname, 'tmp') });
 
 // Helper: run SQL with Promise
@@ -45,6 +47,12 @@ function getAsync(sql, params=[]) {
 app.post('/api/auth/register', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'email and password required' });
+  // Basic validation
+  const emailRe = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  if (!emailRe.test(email)) return res.status(400).json({ error: 'invalid_email' });
+  if (typeof password !== 'string' || password.length < 8)
+    return res.status(400).json({ error: 'password_too_short' });
+
   try {
     const hash = await bcrypt.hash(password, 10);
     await runAsync('INSERT INTO users (email, password_hash) VALUES (?, ?)', [email, hash]);
@@ -53,6 +61,7 @@ app.post('/api/auth/register', async (req, res) => {
     res.json({ token, user });
   } catch (err) {
     console.error(err);
+    if (err && err.code === 'SQLITE_CONSTRAINT') return res.status(409).json({ error: 'email_exists' });
     res.status(500).json({ error: 'register_failed' });
   }
 });

@@ -52,31 +52,56 @@
     // fetch items and merge
     const items = await fetchServerItems();
     if (!Array.isArray(items) || items.length === 0) return result;
-    if (!window.inventory || !Array.isArray(window.inventory)) window.inventory = [];
 
-    // Merge: avoid exact duplicates by server id
-    const existingIds = new Set(window.inventory.map((i) => i.id));
-    let added = 0;
-    for (const row of items) {
-      const mapped = mapServerItemToLocal(row);
-      if (!existingIds.has(mapped.id)) {
-        window.inventory.unshift(mapped); // add to front
-        existingIds.add(mapped.id);
-        added++;
-      }
-    }
+    // Map server rows into the app's import JSON shape and use the existing
+    // importJsonFromText pipeline so items receive proper UUID/serial stamping
+    const mapped = items.map((row) => {
+      return {
+        // Minimal safe mapping; inventory-import.js will sanitize and supply defaults
+        name: row.name || row['Name / Type'] || row['Name'] || '',
+        type: row.type || '',
+        metal: row.metal || '',
+        weight: row.weight_oz || row['Weight (oz)'] || row.weight || 0,
+        weightUnit: 'oz',
+        date: row.date_bought || row['Date Bought'] || row.date || null,
+        price: row.price_paid_gbp || row['Price Paid (£)'] || row.price || 0,
+        notes: row.notes || row.Notes || '',
+        importSource: 'server',
+      };
+    });
 
-    // Persist and refresh table if helper exists
     try {
-      if (typeof persistInventoryAndRefresh === 'function') {
-        persistInventoryAndRefresh();
-      } else if (typeof saveInventory === 'function') {
-        await saveInventory();
+      if (typeof importJsonFromText === 'function') {
+        // importJsonFromText expects JSON text and an override flag
+        await importJsonFromText(JSON.stringify(mapped), false);
+        return { imported: result.imported || 0, added: mapped.length };
+      } else if (typeof importJson === 'function') {
+        // fallback: call importJson using a Blob
+        const blob = new Blob([JSON.stringify(mapped)], { type: 'application/json' });
+        const file = new File([blob], 'server-import.json', { type: 'application/json' });
+        await importJson(file, false);
+        return { imported: result.imported || 0, added: mapped.length };
+      } else {
+        // as a last resort, push minimal mapped items with srv- ids (legacy path)
+        if (!window.inventory || !Array.isArray(window.inventory)) window.inventory = [];
+        const existingKeys = new Set(window.inventory.map((i) => i.id || i.uuid || ''));
+        let added = 0;
+        for (const m of mapped) {
+          const sid = "srv-" + Math.random().toString(36).slice(2, 9);
+          if (!existingKeys.has(sid)) {
+            const local = Object.assign({ id: sid }, m);
+            window.inventory.unshift(local);
+            existingKeys.add(sid);
+            added++;
+          }
+        }
+        if (typeof persistInventoryAndRefresh === 'function') persistInventoryAndRefresh();
+        return { imported: result.imported || 0, added };
       }
-    } catch (e) {
-      console.error('persist failed', e);
+    } catch (err) {
+      console.error('server import apply failed', err);
+      throw err;
     }
-    return { imported: result.imported || 0, added };
   }
 
   document.addEventListener('DOMContentLoaded', () => {

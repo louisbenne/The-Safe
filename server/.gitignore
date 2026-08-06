@@ -1,0 +1,4 @@
+the_safe.db
+tmp/
+node_modules/
+.env
