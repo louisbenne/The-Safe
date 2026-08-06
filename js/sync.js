@@ -12,7 +12,8 @@
 
     const headers = Object.assign({}, window.theSafeAuth ? window.theSafeAuth.getAuthHeader() : {});
 
-    const res = await fetch('/api/import', {
+    const url = window.THE_SAFE_SERVER_URL ? window.THE_SAFE_SERVER_URL.replace(/\/$/, '') + '/api/import' : '/api/import';
+    const res = await fetch(url, {
       method: 'POST',
       headers,
       body: fd,
@@ -25,8 +26,9 @@
   }
 
   async function fetchServerItems() {
+    const url = window.THE_SAFE_SERVER_URL ? window.THE_SAFE_SERVER_URL.replace(/\/$/, '') + '/api/items' : '/api/items';
     const headers = Object.assign({ 'Content-Type': 'application/json' }, window.theSafeAuth ? window.theSafeAuth.getAuthHeader() : {});
-    const res = await fetch('/api/items', { headers });
+    const res = await fetch(url, { headers });
     if (!res.ok) return [];
     return res.json();
   }

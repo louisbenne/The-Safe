@@ -6,6 +6,9 @@
 
   const TOKEN_KEY = "the_safe_token";
 
+  // Configurable server URL: set window.THE_SAFE_SERVER_URL to override (e.g., http://localhost:4000)
+  const SERVER_URL = (typeof window !== 'undefined' && window.THE_SAFE_SERVER_URL) ? window.THE_SAFE_SERVER_URL.replace(/\/$/, '') : '';
+
   const setToken = (t) => {
     try {
       if (t) localStorage.setItem(TOKEN_KEY, t);
@@ -49,7 +52,8 @@
 
   async function doLogin(email, password) {
     try {
-      const res = await fetch('/api/auth/login', {
+      const url = SERVER_URL ? SERVER_URL + '/api/auth/login' : '/api/auth/login';
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -67,7 +71,8 @@
 
   async function doRegister(email, password) {
     try {
-      const res = await fetch('/api/auth/register', {
+      const url = SERVER_URL ? SERVER_URL + '/api/auth/register' : '/api/auth/register';
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
