@@ -1,0 +1,157 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh16700\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Plan + checklist below. \
+\
+Summary\
+- Remove features listed in the Vault Fork removal spec while keeping all other UI, data fields, and behavior unchanged.\
+- Priorities: avoid breaking storage schema, keep serial/cert field, ensure ALLOWED_STORAGE_KEYS updated, update Settings UI, remove cloud/encryption and catalog integrations, remove Goldback/Constitutional UI and logic.\
+\
+High-level phases\
+1. Prep\
+  - Create feature branch (worktree already active).\
+  - Run repo-wide search to map occurrences (grep/glob).\
+  - Add todos (done per your choice).\
+2. Implementation (atomic commits per area)\
+  - Grading & Catalog lookups\
+  - Catalog/descriptive metadata and capsule\
+  - Constitutional & Goldback removal\
+  - Cloud sync & encrypted backup removal\
+  - Multi-currency removal\
+  - Bulk editor & change-log simplification\
+  - PDF export & location chart removal\
+  - UI polish, accessibility, and tests\
+3. Verification\
+  - Lint, unit/playwright, manual UI checks, accessibility spot-checks\
+  - Update docs and changelog note (Vault fork)\
+4. PR & Merge\
+  - PR description linking spec, tests evidence, screenshots, labels\
+  - Reviewer checklist + run agentlint if required\
+\
+Detailed checklist (per commit/task)\
+A. Grading & Catalog lookup\
+- Remove:\
+  - Grade dropdown and Authority dropdown from Add Item modal.\
+  - Numista #, PCGS # input + lookup triggers, Numista/PCGS modals, Numista import option.\
+- Code changes:\
+  - js/add-item-modal.js (or equivalent) \'97 remove inputs and UI rows; collapse layout.\
+  - js/catalog-lookup.js, js/numista-lookup.js, js/pcgs-lookup.js \'97 remove files or guard entry points and exports.\
+  - Remove lookup icons/buttons from the Add Item modal header.\
+- Data/Storage:\
+  - Remove any localStorage keys for catalog lookup settings from ALLOWED_STORAGE_KEYS in js/constants.js.\
+- Tests:\
+  - Remove/update Playwright tests referencing lookup flows and lookup modals.\
+\
+B. Catalog & Descriptive Metadata\
+- Remove:\
+  - Catalog Data collapsible section and its fields (Country, Denomination, Composition, Shape, Diameter, Length, Width, Thickness, Orientation, Technique, Mintage, Rarity Index, KM Reference).\
+  - Commemorative toggle + descriptions (obverse/reverse/edge).\
+  - Capsule toggle and Capsule Notes.\
+- Code changes:\
+  - js/item-metadata.js (or wherever the Add Item form is built) \'97 remove section and adjust form layout.\
+  - table sort menu: remove Mintage/Rarity options (inventory-table.js).\
+- Tests/UX:\
+  - Ensure Notes remains and resizes as single free-text field.\
+\
+C. Constitutional Silver & Goldback\
+- Remove:\
+  - Constitutional (by-denomination/face-value calc), related form inputs and junk-silver estimate.\
+  - Goldback/Silverback unit options, denomination presets, Goldback pricing engine and UI (history modal, settings filter).\
+- Code changes:\
+  - Remove conditional form block, strip "Constitutional" from Type dropdown options.\
+  - Remove goldback modules: js/goldback.js and any UI hooks.\
+  - Update Unit dropdown options and Metal Order/ticker filter list.\
+- Data/Storage:\
+  - Remove goldback-related storage keys from ALLOWED_STORAGE_KEYS and any save/load functions.\
+- Tests:\
+  - Remove/update tests for goldback flows, price history modal.\
+\
+D. Cloud Sync & Encrypted Backup\
+- Remove:\
+  - Dropbox connect flow, auto-sync toggle, Sync Now, sync history, Dropbox Settings modal.\
+  - Encrypted .stvault export/import flows and password prompts; Restore Preview/Review Changes modals.\
+- Code changes:\
+  - js/cloud-storage.js \'97 remove Dropbox integrations and placeholders.\
+  - js/vault.js \'97 remove AES-GCM vault export/import code and UI menu entries.\
+  - Settings: remove entire Cloud tab and "Encrypted Backup" entry in export/import UI.\
+- Data/Storage:\
+  - Remove Dropbox tokens/local keys from ALLOWED_STORAGE_KEYS and cleanupStorage whitelist.\
+- Tests/UX:\
+  - Remove cloud-sync tests, update export/import Playwright tests to reflect ZIP/CSV/JSON only.\
+\
+E. Multi-Currency\
+- Remove:\
+  - Display currency selector and Open Exchange Rates integration.\
+  - 24h price-comparison basis picker.\
+- Code changes:\
+  - js/currency.js (or settings-listeners.js) \'97 collapse Settings \uc0\u8594  Currency panel to fixed GBP label.\
+  - Remove exchange-rate fetch code and associated API config.\
+- Data/Storage:\
+  - Remove exchange-related storage keys from ALLOWED_STORAGE_KEYS.\
+- Tests:\
+  - Update tests asserting currency switch behavior.\
+\
+F. Bulk Editor & Full Change Log\
+- Remove:\
+  - Bulk Editor modal, button, and multi-select batch edit tool.\
+  - Catalog API history tab, Cloud tab (if Dropbox removed), per-field undo grid.\
+- Code changes:\
+  - js/bulk-edit.js \'97 remove file or guard UI entry points.\
+  - js/activity-log.js \'97 simplify tabs to Changelog + Spot Price history.\
+- Tests:\
+  - Remove bulk editor tests and adjust activity log tests.\
+\
+G. Other Removals\
+- Remove PDF export generator and Breakdown-by-Purchase-Location chart/modal.\
+- Code changes:\
+  - js/pdf-export.js \'97 remove or de-register.\
+  - Update summary grid to reflow (CSS or summary rendering logic).\
+- Tests:\
+  - Remove tests referencing the chart/modal and PDF export.\
+\
+H. Global housekeeping\
+- ALLOWED_STORAGE_KEYS: update js/constants.js to remove keys for removed features.\
+- cleanupStorage(): ensure removed keys do not break existing cleanup logic.\
+- Menu/Settings: update index.html/settings UI to remove tabs/entries and adjust ordering.\
+- About/Docs: Add a small "Vault fork" note to js/about.js What's New (optional).\
+- Versioning: not a release bump; still run check-release-sync locally to confirm no accidental version files touched.\
+\
+Search patterns to use (repo root)\
+- grep -n "Numista" "PCGS" "PCGS #" "numista" "catalog" "grade dropdown" "Grade" "Authority" -- or\
+- glob: "**/*numista*.js", "**/*pcgs*.js", "**/*goldback*.js", "**/*vault*.js", "**/*cloud*.js", "**/*bulk*.js", "**/*pdf*.js"\
+- Search for localStorage keys in js/constants.js and calls to saveData()/loadData() referencing removed features.\
+\
+Testing & verification\
+- Run: npm run lint; fix issues\
+- Run: npm test (core Playwright)\
+- Targeted Playwright runs for updated feature tests (remove/adjust tests)\
+- Manual QA:\
+  - Add Item modal (ensure no gaps; serial/cert still present)\
+  - Settings page: Cloud tab gone; Currency is fixed GBP\
+  - Export menu: ZIP/CSV/JSON only\
+  - Inventory table: no sort options for removed fields; table reflows correctly\
+  - Spot price card still shows \'a3 pricing\
+- Accessibility spot-checks (keyboard nav to Add Item modal and Settings)\
+\
+Documentation & PR\
+- Update README or repository docs mentioning Vault fork differences (brief).\
+- PR body: link to Fork Removal Spec PDF, list tasks done, include before/after screenshots of Add Item modal and Settings, list tests run (lint + playwright + manual checklist).\
+- Labels: coderabbit-review? (skip if small chore), codacy-review not needed unless static security changes; add "vault-fork" tag in PR title/body.\
+- Include CHANGES entry (if project policy requires).\
+\
+Estimated effort\
+- Mapping + search: 1\'962 hours\
+- Implementation (code edits across modules): 4\'9612 hours depending on coupling and tests\
+- Testing and QA: 2\'964 hours\
+- PR & review fixes: 1\'963 hours\
+\
+Next actions\
+- Create session todos from the checklist (done per your choice).\
+- Run repo search to gather exact file lists for each task (recommended next technical step).\
+- Start with Grading & Catalog removal commit.\
+\
+Would you like the repo search and exact file list for each task produced next?}
