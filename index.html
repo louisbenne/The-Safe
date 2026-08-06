@@ -148,19 +148,46 @@
     </script>
 
     
-    <!-- DEV: set server URL for local testing (override with window.THE_SAFE_SERVER_URL) -->
+    <!-- DEV: set server URL for local testing (override with window.THE_SAFE_SERVER_URL). This accessor
+         sanitizes markdown-style pasted values so assignments in DevTools like
+         "[http://localhost:4000](http://localhost:4000)" become the raw URL. -->
     <script>
-      if (!window.THE_SAFE_SERVER_URL) {
-        window.THE_SAFE_SERVER_URL = 'http://localhost:4000';
-      } else {
-        // sanitize markdown-style pastes like "[http://localhost:4000](http://localhost:4000)"
-        try {
-          var m = String(window.THE_SAFE_SERVER_URL).match(/\[?(https?:\/\/[^\]\(\s]+)\]?(?:\([^\)]*\))?/);
-          if (m && m[1]) window.THE_SAFE_SERVER_URL = m[1];
-        } catch (e) {
-          // leave as-is on any regex error
+      (function () {
+        var raw = 'http://localhost:4000';
+        var current = raw;
+        // initializer: if page set a value before this script, sanitize it
+        if (typeof window.THE_SAFE_SERVER_URL !== 'undefined' && window.THE_SAFE_SERVER_URL) {
+          try {
+            var m = String(window.THE_SAFE_SERVER_URL).match(/\[?(https?:\/\/[^\]\(\s]+)\]?(?:\([^\)]*\))?/);
+            if (m && m[1]) current = m[1];
+            else current = String(window.THE_SAFE_SERVER_URL);
+          } catch (e) {
+            current = String(window.THE_SAFE_SERVER_URL);
+          }
         }
-      }
+
+        Object.defineProperty(window, 'THE_SAFE_SERVER_URL', {
+          configurable: true,
+          enumerable: true,
+          get: function () {
+            return current;
+          },
+          set: function (v) {
+            try {
+              var s = String(v);
+              var m = s.match(/\[?(https?:\/\/[^\]\(\s]+)\]?(?:\([^\)]*\))?/);
+              if (m && m[1]) current = m[1];
+              else current = s;
+            } catch (e) {
+              current = raw;
+            }
+            return current;
+          },
+        });
+
+        // ensure default is set
+        if (!window.THE_SAFE_SERVER_URL) window.THE_SAFE_SERVER_URL = raw;
+      })();
     </script>
 <!-- THEME FLASH PREVENTION: set data-theme before CSS renders so :root light-mode
          vars never paint. Runs synchronously (no defer) after file-protocol-fix.js so
