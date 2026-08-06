@@ -14,10 +14,10 @@
  */
 const API_PROVIDERS = {
   STAKTRAKR: {
-    name: "StakTrakr",
+    name: "THE SAFE",
     baseUrl: "https://api.staktrakr.com/data",
     requiresKey: false,
-    documentation: "https://www.staktrakr.com",
+    documentation: "https://benne.co.uk",
     endpoints: { silver: "", gold: "", platinum: "", palladium: "" },
     getEndpoint: () => "",
     parseResponse: () => null,
@@ -423,7 +423,7 @@ const injectVersionString = (elementId, prefix = "v") => {
 };
 
 /** @constant {string} BRANDING_TITLE - Optional custom application title */
-const BRANDING_TITLE = "StakTrakr";
+const BRANDING_TITLE = "THE SAFE";
 
 /**
  * Domain-based branding configuration
