@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const xlsx = require('xlsx');
 const path = require('path');
+const fs = require('fs');
 
 const db = require('./db');
 
@@ -13,9 +14,13 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
+// Ensure tmp upload directory exists
+const TMP_DIR = path.join(__dirname, 'tmp');
+try { fs.mkdirSync(TMP_DIR, { recursive: true }); } catch (e) { /* ignore */ }
+
 const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-prod';
 if (JWT_SECRET === 'change-me-in-prod') console.warn('Warning: using default JWT_SECRET. Set JWT_SECRET in .env for production.');
-const upload = multer({ dest: path.join(__dirname, 'tmp') });
+const upload = multer({ dest: TMP_DIR });
 
 // Helper: run SQL with Promise
 function runAsync(sql, params=[]) {
@@ -126,6 +131,13 @@ app.post('/api/import', authMiddleware, upload.single('file'), async (req, res) 
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'import_failed' });
+  } finally {
+    // Clean up uploaded file to avoid tmp buildup
+    if (req.file && req.file.path) {
+      fs.unlink(req.file.path, (e) => {
+        if (e) console.warn('Failed to remove tmp upload', req.file.path, e.message || e);
+      });
+    }
   }
 });
 
