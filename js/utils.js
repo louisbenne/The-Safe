@@ -117,7 +117,7 @@ const getFooterDomain = () => {
   if (host === "stackrtrackr.com" || host.endsWith(".stackrtrackr.com")) return "stackrtrackr.com";
   if (host === "stackertrackr.com" || host.endsWith(".stackertrackr.com"))
     return "stackertrackr.com";
-  return "staktrakr.com";
+  return "benne.co.uk";
 };
 
 /**

@@ -423,7 +423,7 @@ const injectVersionString = (elementId, prefix = "v") => {
 };
 
 /** @constant {string} BRANDING_TITLE - Optional custom application title */
-const BRANDING_TITLE = "StakTrakr";
+const BRANDING_TITLE = "THE SAFE";
 
 /**
  * Domain-based branding configuration
