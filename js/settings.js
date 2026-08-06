@@ -2784,7 +2784,8 @@ const applyLayoutOrder = () => {
     search: elements.searchSectionEl,
     table: elements.tableSectionEl,
     bestPriceTicker: safeGetElement("bestPriceTickerEl"),
-    vendorPrices: safeGetElement("vendorPricesSectionEl"),
+    // vendorPrices removed in THE SAFE rebrand: vendorPricesSectionEl no longer in index.html
+    vendorPrices: null,
   };
   const container = document.querySelector(".container");
   if (!container) return;
